@@ -2,13 +2,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "./App.css";
 
+const API_BASE = "https://budget-tracker-0f26.onrender.com"; // ✅ NEW BASE URL
+
 function App() {
   const [expenses, setExpenses] = useState([]);
   const [form, setForm] = useState({ name: "", amount: "" });
 
   const fetchExpenses = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/expenses");
+      const res = await axios.get(`${API_BASE}/api/expenses`);
       setExpenses(res.data);
     } catch (err) {
       alert("Unable to fetch expenses. Make sure the backend is running.");
@@ -18,7 +20,7 @@ function App() {
   const addExpense = async () => {
     if (!form.name || !form.amount) return;
     try {
-      await axios.post("http://localhost:5000/api/expenses", form);
+      await axios.post(`${API_BASE}/api/expenses`, form);
       setForm({ name: "", amount: "" });
       fetchExpenses();
     } catch (err) {
@@ -27,7 +29,7 @@ function App() {
   };
 
   const deleteExpense = async (id) => {
-    await axios.delete(`http://localhost:5000/api/expenses/${id}`);
+    await axios.delete(`${API_BASE}/api/expenses/${id}`);
     fetchExpenses();
   };
 
