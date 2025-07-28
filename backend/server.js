@@ -23,9 +23,8 @@ const User = mongoose.model("User", {
   password: String,
 });
 
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = "your_secret_key";
+const JWT_SECRET =
+  "96f56cef7d9ecd3ec1bec699294c8edd3f1d863e9ec0748b8866397615ff3e4c3f497ac28d00e4abf892d1b4a7d046ccbf49c017946472066916e8a87e5e427e";
 
 // Expense Schema
 const Expense = mongoose.model("Expense", {
