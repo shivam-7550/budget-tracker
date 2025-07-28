@@ -1,35 +1,39 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function Login({ setToken, navigate }) {
+const API_BASE = process.env.API_BASE;
+
+function Login({ onLogin }) {
   const [form, setForm] = useState({ email: "", password: "" });
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/login", form);
+      const res = await axios.post(`${API_BASE}/api/login`, form);
       localStorage.setItem("token", res.data.token);
-      setToken(res.data.token);
-      navigate("/dashboard");
-    } catch {
-      alert("Invalid credentials");
+      onLogin(res.data.user); // send user info to parent
+    } catch (error) {
+      alert("Login failed");
     }
   };
 
   return (
-    <div>
+    <div className="form">
       <h2>Login</h2>
       <input
+        type="email"
         placeholder="Email"
+        value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
-      <br />
       <input
         type="password"
         placeholder="Password"
+        value={form.password}
         onChange={(e) => setForm({ ...form, password: e.target.value })}
       />
-      <br />
       <button onClick={handleLogin}>Login</button>
     </div>
   );
 }
+
+export default Login;

@@ -1,35 +1,44 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function Register({ navigate }) {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+const API_BASE = process.env.API_BASE;
+
+function Register() {
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const handleRegister = async () => {
-    await axios.post("http://localhost:5000/api/register", form);
-    alert("Registered successfully! Please login.");
-    navigate("/login");
+    try {
+      const res = await axios.post(`${API_BASE}/api/register`, form);
+      alert("Registration successful");
+    } catch (error) {
+      alert("Registration failed");
+    }
   };
 
   return (
-    <div>
+    <div className="form">
       <h2>Register</h2>
       <input
-        placeholder="Username"
-        onChange={(e) => setForm({ ...form, username: e.target.value })}
+        type="text"
+        placeholder="Name"
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
-      <br />
       <input
+        type="email"
         placeholder="Email"
+        value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
-      <br />
       <input
         type="password"
         placeholder="Password"
+        value={form.password}
         onChange={(e) => setForm({ ...form, password: e.target.value })}
       />
-      <br />
       <button onClick={handleRegister}>Register</button>
     </div>
   );
 }
+
+export default Register;
