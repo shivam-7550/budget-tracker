@@ -1,21 +1,23 @@
+// src/Dashboard.js
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const API_BASE = process.env.API_BASE;
+const API_BASE =
+  process.env.API_BASE || "https://budget-tracker-0f26.onrender.com";
 
-function Dashboard() {
-  const [expenses, setExpenses] = useState([]);
+function Dashboard({ onLogout }) {
   const [form, setForm] = useState({ name: "", amount: "" });
+  const [expenses, setExpenses] = useState([]);
 
   const fetchExpenses = async () => {
-    const token = localStorage.getItem("token");
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.get(`${API_BASE}/api/expenses`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setExpenses(res.data);
     } catch (err) {
-      alert("Failed to load expenses");
+      alert("Failed to fetch expenses");
     }
   };
 
@@ -29,32 +31,21 @@ function Dashboard() {
       setForm({ name: "", amount: "" });
       fetchExpenses();
     } catch (err) {
-      alert("Failed to add expense");
+      alert("Error adding expense");
     }
-  };
-
-  const deleteExpense = async (id) => {
-    const token = localStorage.getItem("token");
-    await axios.delete(`${API_BASE}/api/expenses/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    fetchExpenses();
   };
 
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  const total = expenses.reduce((acc, exp) => acc + exp.amount, 0);
-
   return (
-    <div className="container">
-      <h1>Dashboard</h1>
-
-      <div className="form">
+    <div className="dashboard-container">
+      <h2>Expense Dashboard</h2>
+      <div className="form-section">
         <input
           type="text"
-          placeholder="Expense Name"
+          placeholder="Expense name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
@@ -62,23 +53,26 @@ function Dashboard() {
           type="number"
           placeholder="Amount"
           value={form.amount}
-          onChange={(e) =>
-            setForm({ ...form, amount: parseFloat(e.target.value) })
-          }
+          onChange={(e) => setForm({ ...form, amount: e.target.value })}
         />
         <button onClick={addExpense}>Add</button>
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            onLogout();
+          }}
+        >
+          Logout
+        </button>
       </div>
 
-      <ul>
-        {expenses.map((exp) => (
-          <li key={exp._id}>
-            {exp.name} - ₹{exp.amount}{" "}
-            <button onClick={() => deleteExpense(exp._id)}>Delete</button>
+      <ul className="expense-list">
+        {expenses.map((item) => (
+          <li key={item._id}>
+            {item.name} - ₹{item.amount}
           </li>
         ))}
       </ul>
-
-      <h3>Total: ₹{total}</h3>
     </div>
   );
 }

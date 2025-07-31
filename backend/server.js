@@ -16,15 +16,16 @@ mongoose.connect(
   }
 );
 
+// JWT Secret
+const JWT_SECRET =
+  "abe6cc832f3052a6efad824ae907e23accd7c46d5406931fb0a8966a702279e3e67643ce11d034bdb1ecc858e1d0bee9353eb7c5e6607e86094c067bad7e3b00";
+
 // User Schema
 const User = mongoose.model("User", {
   username: String,
   email: String,
   password: String,
 });
-
-const JWT_SECRET =
-  "96f56cef7d9ecd3ec1bec699294c8edd3f1d863e9ec0748b8866397615ff3e4c3f497ac28d00e4abf892d1b4a7d046ccbf49c017946472066916e8a87e5e427e";
 
 // Expense Schema
 const Expense = mongoose.model("Expense", {
@@ -36,6 +37,11 @@ const Expense = mongoose.model("Expense", {
 // Register Route
 app.post("/api/register", async (req, res) => {
   const { username, email, password } = req.body;
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({ message: "Email already in use" });
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = new User({ username, email, password: hashedPassword });
   await user.save();
@@ -51,15 +57,20 @@ app.post("/api/login", async (req, res) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-  const token = jwt.sign({ userId: user._id }, "secretkey");
+  const token = jwt.sign({ userId: user._id }, JWT_SECRET);
   res.json({ token });
 });
 
 // Middleware to check auth
 const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) return res.status(401).json({ message: "Missing token" });
+
+  const token = authHeader.split(" ")[1]; // Bearer <token>
+
   try {
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.userId = decoded.userId;
     next();
   } catch {
@@ -68,16 +79,39 @@ const authMiddleware = (req, res, next) => {
 };
 
 // Expenses APIs
+// GET all expenses for logged-in user
 app.get("/api/expenses", authMiddleware, async (req, res) => {
-  const expenses = await Expense.find({ userId: req.userId });
-  res.json(expenses);
+  try {
+    const expenses = await Expense.find({ userId: req.userId });
+    res.json(expenses);
+  } catch (error) {
+    console.error("Error fetching expenses:", error.message);
+    res.status(500).json({ message: "Server error while fetching expenses" });
+  }
 });
 
+// POST a new expense
 app.post("/api/expenses", authMiddleware, async (req, res) => {
-  const { name, amount } = req.body;
-  const expense = new Expense({ name, amount, userId: req.userId });
-  await expense.save();
-  res.status(201).json(expense);
+  try {
+    const { name, amount } = req.body;
+
+    // Simple validation
+    if (!name || !amount) {
+      return res.status(400).json({ message: "Name and amount are required" });
+    }
+
+    const expense = new Expense({
+      name,
+      amount,
+      userId: req.userId, // from authMiddleware
+    });
+
+    await expense.save();
+    res.status(201).json(expense);
+  } catch (error) {
+    console.error("Error adding expense:", error.message);
+    res.status(500).json({ message: "Server error while adding expense" });
+  }
 });
 
 app.delete("/api/expenses/:id", authMiddleware, async (req, res) => {
