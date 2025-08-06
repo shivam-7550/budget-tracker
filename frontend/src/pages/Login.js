@@ -1,56 +1,62 @@
-import axios from "axios";
 import { useState } from "react";
+import "./Auth.css";
 
-const API_BASE = "https://budget-tracker-0f26.onrender.com";
-
-const Login = ({ setPage, setToken }) => {
+const Login = ({ setPage }) => {
   const [form, setForm] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   const handleLogin = async () => {
     try {
-      const res = await axios.post(`${API_BASE}/api/login`, form);
-      const token = res.data.token;
-      if (token) {
-        localStorage.setItem("token", token);
-        setToken(token); // 🔥 This line is important!
+      const res = await fetch(
+        "https://budget-tracker-0f26.onrender.com/api/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        }
+      );
+      const data = await res.json();
+
+      if (res.status === 200 && data.token) {
+        localStorage.setItem("token", data.token);
+        alert("Login successful");
         setPage("dashboard");
       } else {
-        alert("Login failed. Please check your credentials.");
+        alert(data.message || "Login failed");
       }
     } catch (err) {
+      alert("Error logging in");
       console.error(err);
-      alert("Invalid email or password.");
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="auth-container">
       <h2>Login</h2>
       <input
         type="email"
+        name="email"
         placeholder="Email"
-        value={form.email}
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
+        onChange={handleChange}
       />
-      <br />
       <input
         type="password"
+        name="password"
         placeholder="Password"
-        value={form.password}
-        onChange={(e) => setForm({ ...form, password: e.target.value })}
+        onChange={handleChange}
       />
-      <br />
       <button onClick={handleLogin}>Login</button>
-      <br />
       <p>
         Don't have an account?{" "}
-        <span
-          onClick={() => setPage("register")}
-          style={{ color: "blue", cursor: "pointer" }}
-        >
-          Register here
+        <span className="link" onClick={() => setPage("register")}>
+          Register
         </span>
       </p>
     </div>
   );
 };
+
 export default Login;

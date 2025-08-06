@@ -1,46 +1,64 @@
-import axios from "axios";
 import { useState } from "react";
-
-const API_BASE = "https://budget-tracker-0f26.onrender.com";
+import "./Auth.css";
 
 const Register = ({ setPage }) => {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleRegister = async () => {
     try {
-      const res = await axios.post(`${API_BASE}/api/register`, form);
+      const res = await fetch(
+        "https://budget-tracker-0f26.onrender.com/api/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        }
+      );
+
+      const data = await res.json();
       if (res.status === 201 || res.status === 200) {
-        alert("Registration successful. Please login.");
-        setPage("login"); // 👈 switch to login page
+        alert("Registration successful");
+        setPage("login");
+      } else {
+        alert(data.message || "Registration failed");
       }
     } catch (err) {
+      alert("Error registering");
       console.error(err);
-      alert("Registration failed");
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="auth-container">
       <h2>Register</h2>
       <input
-        type="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
+        type="text"
+        name="name"
+        placeholder="Name"
+        onChange={handleChange}
       />
-      <br />
-
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        onChange={handleChange}
+      />
       <input
         type="password"
+        name="password"
         placeholder="Password"
-        value={form.password}
-        onChange={(e) => setForm({ ...form, password: e.target.value })}
+        onChange={handleChange}
       />
-      <br />
       <button onClick={handleRegister}>Register</button>
       <p>
         Already have an account?{" "}
-        <button onClick={() => setPage("login")}>Login</button>
+        <span className="link" onClick={() => setPage("login")}>
+          Login
+        </span>
       </p>
     </div>
   );

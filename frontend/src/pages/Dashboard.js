@@ -1,37 +1,58 @@
-// src/Dashboard.js
-import axios from "axios";
 import { useEffect, useState } from "react";
+import "./Dashboard.css";
 
-const API_BASE =
-  process.env.API_BASE || "https://budget-tracker-0f26.onrender.com";
-
-function Dashboard({ onLogout }) {
-  const [form, setForm] = useState({ name: "", amount: "" });
+const Dashboard = ({ setPage }) => {
   const [expenses, setExpenses] = useState([]);
+  const [newExpense, setNewExpense] = useState({ title: "", amount: "" });
 
   const fetchExpenses = async () => {
+    const token = localStorage.getItem("token");
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_BASE}/api/expenses`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setExpenses(res.data);
+      const res = await fetch(
+        "https://budget-tracker-0f26.onrender.com/api/expenses",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (res.status === 200) {
+        setExpenses(data);
+      } else {
+        alert(data.message || "Error fetching expenses");
+      }
     } catch (err) {
-      alert("Failed to fetch expenses");
+      console.error(err);
     }
   };
 
   const addExpense = async () => {
-    if (!form.name || !form.amount) return;
+    const token = localStorage.getItem("token");
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(`${API_BASE}/api/expenses`, form, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setForm({ name: "", amount: "" });
-      fetchExpenses();
+      const res = await fetch(
+        "https://budget-tracker-0f26.onrender.com/api/expenses",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(newExpense),
+        }
+      );
+
+      const data = await res.json();
+      if (res.status === 201) {
+        setNewExpense({ title: "", amount: "" });
+        fetchExpenses();
+      } else {
+        alert(data.message || "Error adding expense");
+      }
     } catch (err) {
-      alert("Error adding expense");
+      console.error(err);
     }
   };
 
@@ -40,41 +61,47 @@ function Dashboard({ onLogout }) {
   }, []);
 
   return (
-    <div className="dashboard-container">
-      <h2>Expense Dashboard</h2>
-      <div className="form-section">
+    <div className="dashboard">
+      <h2>Dashboard</h2>
+      <div className="expense-form">
         <input
           type="text"
-          placeholder="Expense name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          placeholder="Title"
+          value={newExpense.title}
+          onChange={(e) =>
+            setNewExpense({ ...newExpense, title: e.target.value })
+          }
         />
         <input
           type="number"
           placeholder="Amount"
-          value={form.amount}
-          onChange={(e) => setForm({ ...form, amount: e.target.value })}
+          value={newExpense.amount}
+          onChange={(e) =>
+            setNewExpense({ ...newExpense, amount: e.target.value })
+          }
         />
-        <button onClick={addExpense}>Add</button>
-        <button
-          onClick={() => {
-            localStorage.removeItem("token");
-            onLogout();
-          }}
-        >
-          Logout
-        </button>
+        <button onClick={addExpense}>Add Expense</button>
       </div>
 
       <ul className="expense-list">
-        {expenses.map((item) => (
-          <li key={item._id}>
-            {item.name} - ₹{item.amount}
+        {expenses.map((exp, idx) => (
+          <li key={idx}>
+            <strong>{exp.title}</strong>: ₹{exp.amount}
           </li>
         ))}
       </ul>
+
+      <button
+        className="logout"
+        onClick={() => {
+          localStorage.removeItem("token");
+          setPage("login");
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
-}
+};
 
 export default Dashboard;
