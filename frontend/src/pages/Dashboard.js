@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./Dashboard.css";
+import "./Dashboard.css"; // Include external CSS for styling
 
 const Dashboard = ({ setPage }) => {
   const [expenses, setExpenses] = useState([]);
@@ -61,9 +61,12 @@ const Dashboard = ({ setPage }) => {
   }, []);
 
   return (
-    <div className="dashboard">
-      <h2>Dashboard</h2>
-      <div className="expense-form">
+    <div className="dashboard-container">
+      <header>
+        <h2>Budget Dashboard</h2>
+      </header>
+
+      <section className="expense-form">
         <input
           type="text"
           placeholder="Title"
@@ -80,19 +83,20 @@ const Dashboard = ({ setPage }) => {
             setNewExpense({ ...newExpense, amount: e.target.value })
           }
         />
-        <button onClick={addExpense}>Add Expense</button>
-      </div>
+        <button onClick={addExpense}>Add</button>
+      </section>
 
-      <ul className="expense-list">
+      <section className="expense-list">
         {expenses.map((exp, idx) => (
-          <li key={idx}>
-            <strong>{exp.title}</strong>: ₹{exp.amount}
-          </li>
+          <div className="expense-item" key={idx}>
+            <span className="expense-title">{exp.title}</span>
+            <span className="expense-amount">₹{exp.amount}</span>
+          </div>
         ))}
-      </ul>
+      </section>
 
       <button
-        className="logout"
+        className="logout-btn"
         onClick={() => {
           localStorage.removeItem("token");
           setPage("login");
