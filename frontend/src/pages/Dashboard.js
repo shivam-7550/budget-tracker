@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./Auth.css"; // Include external CSS for styling
 
 const Dashboard = ({ setPage }) => {
   const [expenses, setExpenses] = useState([]);
@@ -61,12 +60,27 @@ const Dashboard = ({ setPage }) => {
   }, []);
 
   return (
-    <div className="dashboard-container">
-      <header>
-        <h2>Budget Dashboard</h2>
+    <div
+      style={{
+        maxWidth: "800px",
+        margin: "auto",
+        padding: "20px",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <header style={{ textAlign: "center", marginBottom: "30px" }}>
+        <h2 style={{ fontSize: "2rem" }}>Budget Dashboard</h2>
       </header>
 
-      <section className="expense-form">
+      <section
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "10px",
+          justifyContent: "center",
+          marginBottom: "20px",
+        }}
+      >
         <input
           type="text"
           placeholder="Title"
@@ -74,6 +88,13 @@ const Dashboard = ({ setPage }) => {
           onChange={(e) =>
             setNewExpense({ ...newExpense, title: e.target.value })
           }
+          style={{
+            flex: "1 1 150px",
+            padding: "10px",
+            fontSize: "1rem",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+          }}
         />
         <input
           type="number"
@@ -82,24 +103,75 @@ const Dashboard = ({ setPage }) => {
           onChange={(e) =>
             setNewExpense({ ...newExpense, amount: e.target.value })
           }
+          style={{
+            flex: "1 1 150px",
+            padding: "10px",
+            fontSize: "1rem",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+          }}
         />
-        <button onClick={addExpense}>Add</button>
+        <button
+          onClick={addExpense}
+          style={{
+            flex: "1 1 100px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            padding: "10px",
+            border: "none",
+            borderRadius: "5px",
+            fontSize: "1rem",
+            cursor: "pointer",
+          }}
+        >
+          Add
+        </button>
       </section>
 
-      <section className="expense-list">
+      <section
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+          maxHeight: "400px",
+          overflowY: "auto",
+        }}
+      >
         {expenses.map((exp, idx) => (
-          <div className="expense-item" key={idx}>
-            <span className="expense-title">{exp.title}</span>
-            <span className="expense-amount">₹{exp.amount}</span>
+          <div
+            key={idx}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              backgroundColor: "#f2f2f2",
+              padding: "10px",
+              borderRadius: "5px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            }}
+          >
+            <span style={{ fontWeight: "bold" }}>{exp.title}</span>
+            <span style={{ color: "#333" }}>₹{exp.amount}</span>
           </div>
         ))}
       </section>
 
       <button
-        className="logout-btn"
         onClick={() => {
           localStorage.removeItem("token");
           setPage("login");
+        }}
+        style={{
+          marginTop: "30px",
+          backgroundColor: "#f44336",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "5px",
+          fontSize: "1rem",
+          cursor: "pointer",
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
         }}
       >
         Logout
