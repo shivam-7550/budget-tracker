@@ -2,15 +2,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
 const API_BASE = "https://budget-tracker-0f26.onrender.com";
-
 function App() {
   const [form, setForm] = useState({ name: "", amount: "" });
   const [expenses, setExpenses] = useState([]);
   const [page, setPage] = useState("login");
   const [token, setToken] = useState(localStorage.getItem("token"));
-
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
@@ -18,7 +15,6 @@ function App() {
       setPage("dashboard");
     }
   }, []);
-
   const fetchExpenses = async () => {
     if (!token) return;
     try {
@@ -36,7 +32,6 @@ function App() {
       setPage("login");
     }
   };
-
   const addExpense = async () => {
     if (!form.name || !form.amount) return;
     try {
@@ -55,7 +50,6 @@ function App() {
       setPage("login");
     }
   };
-
   const deleteExpense = async (id) => {
     try {
       await axios.delete(`${API_BASE}/api/expenses/${id}`, {
@@ -68,23 +62,19 @@ function App() {
       console.error("Delete failed:", err);
     }
   };
-
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
     setPage("login");
   };
-
   useEffect(() => {
     if (token) {
       setPage("dashboard");
       fetchExpenses();
     }
   }, [token]);
-
   if (page === "login") return <Login setPage={setPage} setToken={setToken} />;
   if (page === "register") return <Register setPage={setPage} />;
-
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h2>💰 Budget Tracker</h2>
@@ -122,5 +112,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

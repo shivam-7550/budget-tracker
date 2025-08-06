@@ -5,8 +5,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(
+  cors({
+    origin: "https://budget-tracker-1-c0wb.onrender.com",
+    credentials: true,
+  })
+);
 
 mongoose.connect(
   "mongodb+srv://shivam-9461:Abcd@cluster0.f1n8w0m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",

@@ -5,12 +5,10 @@ const API_BASE = "https://budget-tracker-0f26.onrender.com";
 
 const Login = ({ setPage }) => {
   const [form, setForm] = useState({ email: "", password: "" });
-
   const handleLogin = async () => {
     try {
       const res = await axios.post(`${API_BASE}/api/login`, form);
       const token = res.data.token;
-
       if (token) {
         localStorage.setItem("token", token);
         setPage("dashboard");
@@ -22,7 +20,6 @@ const Login = ({ setPage }) => {
       alert("Invalid email or password.");
     }
   };
-
   return (
     <div style={{ padding: "20px" }}>
       <h2>Login</h2>
@@ -54,5 +51,4 @@ const Login = ({ setPage }) => {
     </div>
   );
 };
-
 export default Login;

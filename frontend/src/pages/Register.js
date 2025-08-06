@@ -29,6 +29,7 @@ const Register = ({ setPage }) => {
         onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
       <br />
+
       <input
         type="password"
         placeholder="Password"
