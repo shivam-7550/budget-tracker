@@ -36,3 +36,106 @@
   cursor: pointer;
   text-decoration: underline;
 }
+
+/* Dashboard.css */
+
+.dashboard-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+header h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.expense-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.expense-form input {
+  flex: 1 1 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.expense-form button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.expense-form button:hover {
+  background-color: #1565c0;
+}
+
+.expense-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.expense-title {
+  font-weight: bold;
+  color: #444;
+}
+
+.expense-amount {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.logout-btn {
+  display: block;
+  margin: 30px auto 0;
+  padding: 10px 30px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 600px) {
+  .expense-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .expense-form input,
+  .expense-form button {
+    width: 100%;
+  }
+
+  .expense-item {
+    flex-direction: column;
+    text-align: center;
+  }
+}

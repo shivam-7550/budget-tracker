@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./Dashboard.css"; // Include external CSS for styling
+import "./Auth.css"; // Include external CSS for styling
 
 const Dashboard = ({ setPage }) => {
   const [expenses, setExpenses] = useState([]);
