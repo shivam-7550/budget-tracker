@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const API_BASE = "https://budget-tracker-0f26.onrender.com";
 
-const Login = ({ setPage }) => {
+const Login = ({ setPage, setToken }) => {
   const [form, setForm] = useState({ email: "", password: "" });
   const handleLogin = async () => {
     try {
@@ -11,6 +11,7 @@ const Login = ({ setPage }) => {
       const token = res.data.token;
       if (token) {
         localStorage.setItem("token", token);
+        setToken(token); // 🔥 This line is important!
         setPage("dashboard");
       } else {
         alert("Login failed. Please check your credentials.");
@@ -20,6 +21,7 @@ const Login = ({ setPage }) => {
       alert("Invalid email or password.");
     }
   };
+
   return (
     <div style={{ padding: "20px" }}>
       <h2>Login</h2>

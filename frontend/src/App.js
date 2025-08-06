@@ -74,6 +74,7 @@ function App() {
     }
   }, [token]);
   if (page === "login") return <Login setPage={setPage} setToken={setToken} />;
+
   if (page === "register") return <Register setPage={setPage} />;
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
